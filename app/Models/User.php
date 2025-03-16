@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -49,7 +50,7 @@ class User extends Authenticatable
     }
     public function wallet()
     {
-        return $this->hasOne(Transaction::class);
+        return $this->hasOne(wallet::class);
     }
     public function transaction()
     {

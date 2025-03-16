@@ -19,9 +19,9 @@ class RoleSeeder extends Seeder
         // Role::factory()->count(10)->create();
         User::factory(10)->create();
 
-    //     Role::create([
-    //     'name'=> Str::random(20),
-    //     'decription' => Str::random(100)
-    //    ]);
+        Role::create([
+        'name'=> 'user',
+        'decription' =>  'this is user'
+       ]);
     }
 }
