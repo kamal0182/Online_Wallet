@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\User;
 use Exception;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB as FacadesDB;
@@ -67,10 +68,47 @@ class TransactionController extends Controller
     }
     public function rollback(Request $request)
     {
-        FacadesDB::begintransaction();
-        // try {
-        //         $transacrtion =  Transaction::find($request->id);
-        //         DB::rollback() ;
-        //     }
+        $transaction = Transaction::find($request->id);
+        if(!$transaction){
+            return response()->json([
+                'message' => 'transaction Not Found'
+            ]);
+        }
+        $sender    = $this->findUser($transaction->sender);
+        $sender->balance += $transaction->amount ;
+        $sender->save();
+        $receiver  = $this->findUser($transaction->receiver);
+        $receiver->balance -= $transaction->amount ;
+        $receiver->save();
+        $transaction->delete();
+        return response()->json([
+            "status" => "success",
+            "message"=> "Rollback operation completed successfully."
+        ]);
+     }
+     public function findUser($id)
+     {
+        $user =  User::find($id);
+        if($user){
+
+            return $user->Wallet ;
+        }
+     }
+    public function alltransacions()
+    {
+        // return "hello";
+        // return auth()->user()->transactionsReciever() ;
+        try {
+            // $user =  auth()->user();
+            // return Transaction::all();
+            $user = User::find(auth()->user()->id);
+            return $user->transactionsSender ;
+            // return Auth::user()->transactionsSender();
+            throw new Exception("error ");
+        }catch(Exception $e){
+            return "344o4 $e";
+        }
+
     }
+
 }
